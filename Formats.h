@@ -21,8 +21,10 @@ public:
 	void setWidth(int width);
 	void setHeight(int height);
 
+	virtual Formats* clone() = 0;
 	virtual void print(std::ostream& out) const = 0;
 	virtual void load(std::string path) = 0;
+	virtual void save(std::string path) = 0;
 	
 	
 };
@@ -32,6 +34,7 @@ inline std::ostream& operator<<(std::ostream& out, const Formats& other)
 	other.print(out);
 	return out;
 }
+
 
 
 #endif

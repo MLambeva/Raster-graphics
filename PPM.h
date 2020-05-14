@@ -22,6 +22,10 @@ public:
 	int getMaxValue() const;
 	RGB getPixels(int x, int y);
 
+	PPM* clone();
+
+	
+
 	void load(std::string path);
 	void print(std::ostream& out) const;
 	void grayscale();

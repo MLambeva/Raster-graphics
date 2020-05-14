@@ -1,11 +1,5 @@
 #include"Formats.h"
 
-//Formats::Formats()
-//{
-//	this->ASCIInum = nullptr;
-//	this->width = 0;
-//	this->height = 0;
-//}
 
 Formats::Formats(std::string ASCIInum, int width, int height)
 {
@@ -40,3 +34,4 @@ void Formats::setHeight(int height)
 {
 	this->height = height;
 }
+

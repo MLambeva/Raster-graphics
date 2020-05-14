@@ -37,6 +37,13 @@ RGB PPM::getPixels(int x, int y)
 	return pixels[x][y];
 }
 
+PPM* PPM::clone()
+{
+	return new PPM(*this);
+}
+
+
+
 void PPM::load(std::string path)
 {
 	std::ifstream input(path.c_str());
@@ -55,7 +62,7 @@ void PPM::load(std::string path)
 		return;
 	}
 	this->ASCIInum = ASCIInum;
-	std::cout << "ASCII " << ASCIInum << '\n';
+	//std::cout << "ASCII " << ASCIInum << '\n';
 	int width;
 	int height;
 	int maxValue;
@@ -88,10 +95,10 @@ void PPM::load(std::string path)
 
 void PPM::print(std::ostream& out) const
 {
-	out << this->ASCIInum << '\n';
-	out << this->width << " " << this->height <<'\n';
-	out << this->maxValue <<'\n';
-	
+	out << "ASCII number: " << this->ASCIInum << '\n';
+	out << "Width: " << this->width << " Height:" << this->height <<'\n';
+	out << "Max value: " << this->maxValue <<'\n';
+	out << "Pixels:\n";
 	for (int i = 0; i < this->height; i++)
 	{
 		for (int j = 0; j < this->width; j++)
