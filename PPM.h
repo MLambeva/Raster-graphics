@@ -16,23 +16,25 @@ private:
 
 public:
 	PPM();
-	PPM(std::string ASCIInum, int width, int height, int maxValue, std::vector<std::vector<RGB>>pixels);
+	PPM(std::string ASCIInum, std::string path, int width, int height, int maxValue, std::vector<std::vector<RGB>>pixels);
 	~PPM();
 	PPM& operator=(const PPM& other);
 	int getMaxValue() const;
 	RGB getPixels(int x, int y);
 
-	PPM* clone();
 
-	
 
-	void load(std::string path);
+	void open(std::string path);
 	void print(std::ostream& out) const;
 	void grayscale();
 	void monochrome();
 	void negative();
 	void rotation(std::string direction);
 	void save(std::string path);
+
+	void undoGrayscale();
+	void undoMonochrome();
+
 };
 
 

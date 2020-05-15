@@ -6,20 +6,19 @@ int Session::id = 0;
 Session::Session()
 {
 	this->id = Session::generateId();
-	for (int i = 0; i < this->formats.size(); i++)
+	for (size_t i = 0; i < this->formats.size(); i++)
 	{
 		this->formats[i] = nullptr;
 	}
-	for (int i = 0; i < this->path.size(); i++)
+	for (size_t i = 0; i < this->actions.size(); i++)
 	{
-		this->path[i] = nullptr;
+		this->actions[i] = nullptr;
 	}
 }
 
 Session ::Session(const Session& other)
 {
 	this->id = other.id;
-	this->formats = other.formats;
 	this->formats = other.formats;
 }
 
@@ -33,9 +32,9 @@ std::vector<Formats*>& Session::getFormats()
 	return this->formats;
 }
 
-std::vector<std::string> Session::getPath()
+std::vector<std::string> Session::getActions()
 {
-	return this->path;
+	return this->actions;
 }
 
 int Session::generateId()
@@ -43,26 +42,16 @@ int Session::generateId()
 	return ++id;
 }
 
-void Session::setPath(std::vector<std::string>)
-{
-	this->path = path;
-}
-
-void Session::addPath(const std::string& path)
-{
-	this->path.push_back(path);
-}
-
 std::ostream& operator<<(std::ostream& out, const Session& other)
 {
 	out << "Session ID: " << other.id << '\n';
-	for (int i = 0; i < other.path.size(); i++)
-	{
-		out << "Path: " << other.path[i] << '\n';
-	}
-	for (int i = 0; i < other.formats.size(); i++)
+	for (size_t i = 0; i < other.formats.size(); i++)
 	{
 		out << *other.formats[i] << " ";
+	}
+	for (size_t i = 0; i < other.actions.size(); i++)
+	{
+		out << other.actions[i] << " ";
 	}
 	
 	return out;

@@ -4,7 +4,8 @@
 
 PPM::PPM() : Formats(), maxValue(0), pixels({ }) {};
 
-PPM::PPM(std::string ASCIInum, int width, int height, int maxValue, std::vector<std::vector<RGB>>pixels):Formats(ASCIInum, width, height)
+PPM::PPM(std::string ASCIInum, std::string path, int width, int height, int maxValue, std::vector<std::vector<RGB>>pixels)
+	:Formats(ASCIInum, path, width, height)
 {
 	this->maxValue = maxValue;
 	this->pixels = pixels;
@@ -19,6 +20,7 @@ PPM& PPM::operator=(const PPM& other)
 	if (this != &other)
 	{
 		this->ASCIInum = other.ASCIInum;
+		this->path = other.path;
 		this->width = other.width;
 		this->height = other.height;
 		this->maxValue = maxValue;
@@ -37,14 +39,7 @@ RGB PPM::getPixels(int x, int y)
 	return pixels[x][y];
 }
 
-PPM* PPM::clone()
-{
-	return new PPM(*this);
-}
-
-
-
-void PPM::load(std::string path)
+void PPM::open(std::string path)
 {
 	std::ifstream input(path.c_str());
 
@@ -62,7 +57,8 @@ void PPM::load(std::string path)
 		return;
 	}
 	this->ASCIInum = ASCIInum;
-	//std::cout << "ASCII " << ASCIInum << '\n';
+	this->path = path;
+	
 	int width;
 	int height;
 	int maxValue;
@@ -96,6 +92,7 @@ void PPM::load(std::string path)
 void PPM::print(std::ostream& out) const
 {
 	out << "ASCII number: " << this->ASCIInum << '\n';
+	out << this->path << '\n';
 	out << "Width: " << this->width << " Height:" << this->height <<'\n';
 	out << "Max value: " << this->maxValue <<'\n';
 	out << "Pixels:\n";
@@ -200,25 +197,59 @@ void PPM::rotation(std::string direction)
 void PPM::save(std::string path)
 {
 	std::ofstream save(path.c_str());
-	this->ASCIInum = "P3";
+	//this->ASCIInum = "P3";
 	save << this->ASCIInum << '\n';
-	std::cout << this->ASCIInum << '\n';
+	//std::cout << this->ASCIInum << '\n';
 	save << this->width << " " << this->height << '\n';
-	std::cout << this->width << " " << this->height << '\n';
-	this->maxValue = 255;
+	//std::cout << this->width << " " << this->height << '\n';
+	//this->maxValue = 255;
 	save << this->maxValue << '\n';
-	std::cout << this->maxValue << '\n';
+	//std::cout << this->maxValue << '\n';
 	
 	for (int i = 0; i < this->height; i++)
 	{
 		for (size_t j = 0; j < this->width; j++)
 		{
 			save << this->pixels[i][j];
-			std::cout << this->pixels[i][j];
+			//std::cout << this->pixels[i][j];
 		}
 		save << '\n';
-		std::cout << '\n';
+		//std::cout << '\n';
 	}
 
 	save.close();
 }
+
+void PPM::undoGrayscale()
+{
+	for (int i = 0; i < this->height; i++)
+	{
+		for (int j = 0; j < this->width; j++)
+		{
+			if ((this->pixels[i][j].getRed() != this->pixels[i][j].getGreen() || this->pixels[i][j].getRed() != this->pixels[i][j].getBlue()))
+			{
+				//Формула от tutorialspoint.com
+				this->pixels[i][j].setRed(this->pixels[i][j].getRed()/0.3);
+				this->pixels[i][j].setGreen(this->pixels[i][j].getGreen()/ 0.59);
+				this->pixels[i][j].setBlue(this->pixels[i][j].getBlue()/ 0.11);
+			}
+		}
+	}
+}
+
+void PPM::undoMonochrome()
+{
+	for (int i = 0; i < this->height; i++)
+	{
+		for (int j = 0; j < this->width; j++)
+		{
+			if (this->pixels[i][j].getRed() != this->pixels[i][j].getGreen() || this->pixels[i][j].getRed() != this->pixels[i][j].getBlue())
+			{
+				this->pixels[i][j].setRed(255);
+				this->pixels[i][j].setGreen(255);
+				this->pixels[i][j].setBlue(255);
+			}
+		}
+	}
+}
+

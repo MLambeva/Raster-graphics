@@ -9,17 +9,16 @@ class Session
 private:
 	static int id;
 	std::vector<Formats*> formats;
-	std::vector<std::string> path;
+	std::vector<std::string> actions;
 public:
 	Session();
 	Session(const Session& other);
 	static int getId();
 	std::vector<Formats*>& getFormats();
-	std::vector<std::string> getPath();
+	std::vector<std::string> getActions();
+
 	static int generateId();
 
-	void setPath(std::vector<std::string>);
-	void addPath(const std::string& path);
 
 	friend std::ostream& operator<<(std::ostream& out, const Session& other);
 
