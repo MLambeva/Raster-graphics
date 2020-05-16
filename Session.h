@@ -15,8 +15,9 @@ public:
 	Session(const Session& other);
 	static int getId();
 	std::vector<Formats*>& getFormats();
-	std::vector<std::string> getActions();
-
+	std::vector<std::string>& getActions();///////////?
+	
+	void addActions(std::string actions);
 	static int generateId();
 
 

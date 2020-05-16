@@ -20,6 +20,7 @@ Session ::Session(const Session& other)
 {
 	this->id = other.id;
 	this->formats = other.formats;
+	this->actions = other.actions;
 }
 
 int Session::getId()
@@ -32,9 +33,14 @@ std::vector<Formats*>& Session::getFormats()
 	return this->formats;
 }
 
-std::vector<std::string> Session::getActions()
+std::vector<std::string>& Session::getActions()
 {
 	return this->actions;
+}
+
+void Session::addActions(std::string actions)
+{
+	this->actions.push_back(actions);
 }
 
 int Session::generateId()
@@ -45,14 +51,17 @@ int Session::generateId()
 std::ostream& operator<<(std::ostream& out, const Session& other)
 {
 	out << "Session ID: " << other.id << '\n';
-	for (size_t i = 0; i < other.formats.size(); i++)
-	{
-		out << *other.formats[i] << " ";
-	}
+	out << "Pending transformations: ";
 	for (size_t i = 0; i < other.actions.size(); i++)
 	{
 		out << other.actions[i] << " ";
 	}
+	std::cout << '\n';
+	for (size_t i = 0; i < other.formats.size(); i++)
+	{
+		out << *other.formats[i] << " ";
+	}
+	
 	
 	return out;
 }
