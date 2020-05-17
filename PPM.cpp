@@ -4,8 +4,8 @@
 
 PPM::PPM() : Formats(), maxValue(0), pixels({ }) {};
 
-PPM::PPM(std::string ASCIInum, std::string path, int width, int height, int maxValue, std::vector<std::vector<RGB>>pixels)
-	:Formats(ASCIInum, path, width, height)
+PPM::PPM(std::string path, std::string ASCIInum, std::string comment, int width, int height, int maxValue, std::vector<std::vector<RGB>>pixels)
+	:Formats(path, ASCIInum, comment, width, height)
 {
 	this->maxValue = maxValue;
 	this->pixels = pixels;
@@ -19,8 +19,9 @@ PPM& PPM::operator=(const PPM& other)
 {
 	if (this != &other)
 	{
-		this->ASCIInum = other.ASCIInum;
 		this->path = other.path;
+		this->ASCIInum = other.ASCIInum;
+		this->comment = other.comment;
 		this->width = other.width;
 		this->height = other.height;
 		this->maxValue = maxValue;
@@ -49,27 +50,33 @@ void PPM::open(std::string path)
 		return;
 	}
 
-	std::string ASCIInum;
-	input >> ASCIInum;
-	if (ASCIInum != "P3")//Няма смисъл, когато направя и за другите формати. 
-	{
-		input.close();
-		return;
-	}
-	this->ASCIInum = ASCIInum;
+	//std::string ASCIInum;
+	input >> this->ASCIInum;
+	//if (ASCIInum != "P3")//Няма смисъл, когато направя и за другите формати. 
+	//{
+	//	input.close();
+	//	return;
+	//}
+	
 	this->path = path;
 	
-	int width;
-	int height;
-	int maxValue;
-	input >> width;
-	input >> height;
-	input >> maxValue;
-
-	this->width = width;
-	this->height = height;
-	this->maxValue = maxValue;	
+	char x;
+	input >> x;
 	
+	if (x == '#')
+	{
+		input.unget();
+		std::getline(input, this->comment);
+	}
+	else
+	{
+		input.unget();
+	}
+	
+	input >> this->width;	
+	input >> this->height;	
+	input >> this->maxValue;
+
 	int red, green, blue;
 	for (int i = 0; i < this->height; i++)
 	{
@@ -77,6 +84,7 @@ void PPM::open(std::string path)
 		for (int j = 0; j < this->width; j++)
 		{
 			RGB saver;
+			input.ignore();
 			input >> red >> green >> blue;
 	
 			saver.setColor(red, green, blue);
@@ -91,8 +99,9 @@ void PPM::open(std::string path)
 
 void PPM::print(std::ostream& out) const
 {
-	out << "ASCII number: " << this->ASCIInum << '\n';
 	out << this->path << '\n';
+	out << "ASCII number: " << this->ASCIInum << '\n';
+	out << this->comment << '\n';
 	out << "Width: " << this->width << " Height:" << this->height <<'\n';
 	out << "Max value: " << this->maxValue <<'\n';
 	out << "Pixels:\n";
@@ -113,12 +122,12 @@ void PPM::grayscale()
 		for (int j = 0; j < this->width; j++)
 		{
 			if ((this->pixels[i][j].getRed() != this->pixels[i][j].getGreen() || this->pixels[i][j].getRed() != this->pixels[i][j].getBlue()))
-				{
-					//Формула от tutorialspoint.com
-					this->pixels[i][j].setRed(0.3 * this->pixels[i][j].getRed());
-					this->pixels[i][j].setGreen(0.59 * this->pixels[i][j].getGreen());
-					this->pixels[i][j].setBlue(0.11 * this->pixels[i][j].getBlue());
-				}
+			{
+				//Формула от tutorialspoint.com
+				this->pixels[i][j].setRed(0.3 * this->pixels[i][j].getRed());
+				this->pixels[i][j].setGreen(0.59 * this->pixels[i][j].getGreen());
+				this->pixels[i][j].setBlue(0.11 * this->pixels[i][j].getBlue());
+			}
 		}
 	}
 }
@@ -145,9 +154,9 @@ void PPM::negative()
 	{
 		for (int j = 0; j < this->width; j++)
 		{
-			this->pixels[i][j].setRed(255 - this->pixels[i][j].getRed());
-			this->pixels[i][j].setGreen(255 - this->pixels[i][j].getGreen());
-			this->pixels[i][j].setBlue(255 - this->pixels[i][j].getBlue());
+			this->pixels[i][j].setRed(this->maxValue - this->pixels[i][j].getRed());//255
+			this->pixels[i][j].setGreen(this->maxValue - this->pixels[i][j].getGreen());
+			this->pixels[i][j].setBlue(this->maxValue - this->pixels[i][j].getBlue());
 		}
 	}
 }
@@ -194,30 +203,116 @@ void PPM::rotation(std::string direction)
 	}
 }
 
-void PPM::save(std::string path)
+void PPM::saveas(std::string path)
 {
-	std::ofstream save(path.c_str());
-	//this->ASCIInum = "P3";
-	save << this->ASCIInum << '\n';
+	std::ofstream saveas(path.c_str());
+	saveas << this->ASCIInum << '\n';
 	//std::cout << this->ASCIInum << '\n';
-	save << this->width << " " << this->height << '\n';
+	//std::string comment = {};
+	//std::streampos help = saveas.tellp();
+
+	 //std::cout << "CHECK1\n";
+	 saveas << this->comment << '\n';
+	 //std::cout << this->comment[0]<<'\n';
+	// std::cout << this->comment<<'\n';
+	 
+	//std::cout << "CHECK3\n";
+	saveas << this->width << " " << this->height << '\n';
+	//std::cout << "CHECK4\n";
 	//std::cout << this->width << " " << this->height << '\n';
-	//this->maxValue = 255;
-	save << this->maxValue << '\n';
+
+	saveas << this->maxValue << '\n';
 	//std::cout << this->maxValue << '\n';
 	
 	for (int i = 0; i < this->height; i++)
 	{
 		for (size_t j = 0; j < this->width; j++)
 		{
-			save << this->pixels[i][j];
+			saveas << this->pixels[i][j];
 			//std::cout << this->pixels[i][j];
 		}
-		save << '\n';
+		saveas << '\n';
 		//std::cout << '\n';
 	}
 
-	save.close();
+	saveas.close();
+}
+
+void PPM::collage(std::string direction, std::string image1, std::string image2, std::string outimage)
+{
+	std::vector<std::vector<RGB>> saver;
+	PPM firstImage;
+	firstImage.open(image1);
+	
+	PPM secondImage;
+	secondImage.open(image2);
+	
+	if (firstImage.height == secondImage.height && firstImage.width == secondImage.width)
+	{
+		if (direction == "horizontal")
+		{
+			this->path = outimage;
+			this->ASCIInum = firstImage.ASCIInum;
+			this->comment = firstImage.comment + secondImage.comment;
+			this->width = 2 * firstImage.width;
+			this->height = firstImage.height;
+			this->maxValue = (firstImage.maxValue + secondImage.maxValue) / 2;
+			for (int i = 0; i < this->height; i++)
+			{
+				std::vector<RGB> helper;
+				for (int j = 0; j < firstImage.width; j++)
+				{
+					helper.push_back(firstImage.pixels[i][j]);
+				}
+
+				for (int t = 0; t < secondImage.width; t++)
+				{
+					helper.push_back(secondImage.pixels[i][t]);
+				}
+				saver.push_back(helper);
+			}
+		}
+		else if (direction == "vertical")
+		{
+			this->path = outimage;
+			this->ASCIInum = firstImage.ASCIInum;
+			this->width = firstImage.width;
+			this->height = 2 * firstImage.height;
+			this->maxValue = (firstImage.maxValue + secondImage.maxValue) / 2;
+
+			size_t k = 0;
+			for (int i = 0; i < this->height; i++)
+			{
+				std::vector<RGB> helper;
+				if (i < firstImage.height)
+				{
+					for (int j = 0; j < firstImage.width; j++)
+					{
+						helper.push_back(firstImage.pixels[i][j]);
+					}
+				}
+				else if (i >= firstImage.height)
+				{
+					for (size_t j = 0; j < this->width; j++)
+					{
+						helper.push_back(secondImage.pixels[k][j]);
+					}
+					k++;
+				}
+				saver.push_back(helper);
+			}
+		}
+		else
+		{
+			std::cout << "Wrong direction!\n";
+		}
+		this->pixels = saver;
+		this->saveas(outimage);
+	}
+	else
+	{
+		std::cout << "Unable to create collage!\n";
+	}
 }
 
 void PPM::undoGrayscale()

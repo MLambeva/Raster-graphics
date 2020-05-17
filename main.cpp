@@ -58,64 +58,80 @@ void load()
 {
     std::string paths = {};
     std::vector<std::string> path = {};
-    Session helper;
+    std::string direction;
+    std::string image1;
+    std::string image2;
+    std::string outimage;
     std::cin.ignore();
     std::getline(std::cin, paths);
     path = helperFunctions::findPath(paths);
     
+    int counter = 0;
     for (size_t i = 0; i < path.size(); i++)
     {
         if (helperFunctions::isCorrectFileFormat(path[i]) && helperFunctions::read(path[i]))
         {
-            helper.getFormats().push_back(loadAccordingToFormat(path[i]));
-            helper.getFormats().back()->open(path[i]);
-            helper.getActions() = {};
-
-            std::cout << "Session with ID: " << helper.getId() << " started!\n";
-            std::cout << "Image " << path[i] << " added!\n";
-        }        
-        else
-        {
-            std::cout << "Image " << path[i] << " is not added!\n";
+            counter++;
         }
     }
-    session.push_back(helper);
+
+    if (counter != 0)//ima pone enda snimka
+    {
+        Session helper;
+
+
+        for (size_t i = 0; i < path.size(); i++)
+        {
+            if (helperFunctions::isCorrectFileFormat(path[i]) && helperFunctions::read(path[i]))
+            {
+                helper.getFormats().push_back(loadAccordingToFormat(path[i]));
+                helper.getFormats().back()->open(path[i]);
+                helper.getActions() = {};
+
+                std::cout << "Session with ID: " << helper.getId() << " started!\n";
+                std::cout << "Image " << path[i] << " added!\n";
+            }
+            else
+            {
+                std::cout << "Image " << path[i] << " is not added!\n";
+            }
+        }
+        session.push_back(helper);
+   
+     
+    
         do
         {
             do
             {
                 std::cout << ">";
-                if (command != "load")
-                {
-                    std::cin.ignore();
-                }
+                
                 std::cin >> command;
                 if (command == "session")
                 {
-                    std::cin.ignore();
                     std::cin >> command;
                     if (command == "info") break;
                 }
-                if (command == "rotate")
-                {
-                    std::cin.ignore();
-                    std::cin >> command;
-                    if (command == "right" || command == "left") break;
-                }
-                
+                                
+
             } while (!isCommand(command));
 
-            if (command == "save")
+            if (command == "saveas")
+            {
+                std::cin.ignore();
+                std::getline(std::cin, paths);
+                
+                session[Session::getId() - 1].getFormats()[0]->saveas(paths);
+                std::cout << "Successfully saved another " << session[Session::getId() - 1].getFormats()[0]->getPath() << '\n';
+                
+            }
+            else if (command == "save")
             {
                 for (size_t i = 0; i < session[(Session::getId()) - 1].getFormats().size(); i++)
-                {       
-                    session[Session::getId() - 1].getFormats()[i]->save(session[Session::getId() - 1].getFormats()[i]->getPath());
-                    std::cout << "Successfully saved " << session[Session::getId() - 1].getFormats()[i]->getPath() <<'\n';
+                {
+                    session[Session::getId() - 1].getFormats()[i]->saveas(session[Session::getId() - 1].getFormats()[i]->getPath());
+                    std::cout << "Successfully saved " << session[Session::getId() - 1].getFormats()[i]->getPath() << '\n';
                 }
-            }
-            else if (command == "saveas")
-            {
-                std::cout << "saveas\n";
             }
             else if (command == "help")
             {
@@ -123,26 +139,25 @@ void load()
             }
             else if (command == "add")
             {
-                paths.clear();
+                //paths.clear();
                 std::cin.ignore();
                 std::cin >> paths;
-                //std::getline(std::cin, paths, ' ');
 
                 if (helperFunctions::isCorrectFileFormat(paths) && helperFunctions::read(paths))
                 {
                     session[(Session::getId()) - 1].getFormats().push_back(loadAccordingToFormat(paths));
                     session[(Session::getId()) - 1].getFormats().back()->open(paths);
-                    helper.addActions("add");
+                    session[(Session::getId()) - 1].addActions("add");
                     std::cout << "Successfully added!: " << session[(Session::getId()) - 1].getFormats().back()->getPath() << '\n';
                 }
-                
-              
+
+
             }
             else if (command == "grayscale")
             {
                 for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
-                { 
-                     session[Session::getId() - 1].getFormats()[i]->grayscale(); 
+                {
+                    session[Session::getId() - 1].getFormats()[i]->grayscale();
                 }
                 session[Session::getId() - 1].getActions().push_back("grayscale");
             }
@@ -150,33 +165,28 @@ void load()
             {
                 for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
                 {
-                        session[Session::getId() - 1].getFormats()[i]->monochrome();
+                    session[Session::getId() - 1].getFormats()[i]->monochrome();
                 }
                 session[Session::getId() - 1].getActions().push_back("monochrome");
             }
             else if (command == "negative")
             {
                 for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
-                {                    
-                     session[Session::getId() - 1].getFormats()[i]->negative();                    
+                {
+                    session[Session::getId() - 1].getFormats()[i]->negative();
                 }
                 session[Session::getId() - 1].getActions().push_back("negative");
             }
-            else if (command == "right")
+            else if (command == "rotate")
             {
+                std::cin.ignore();
+                std::cin >> direction;
                 for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
                 {
-                    session[Session::getId() - 1].getFormats()[i]->rotation("right");
+                    session[Session::getId() - 1].getFormats()[i]->rotation(direction);
                 }
-                session[Session::getId() - 1].addActions("rotate right");
-            }
-            else if (command == "left")
-            {
-                for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
-                {
-                    session[Session::getId() - 1].getFormats()[i]->rotation("left");
-                }
-                session[Session::getId() - 1].getActions().push_back("rotate left");
+                std::string helper = command + " " + direction;
+                session[Session::getId() - 1].addActions(helper);
             }
             else if (command == "switch")
             {
@@ -206,9 +216,10 @@ void load()
             }
             else if (command == "undo")
             {
-                std::string helper = session[Session::getId() - 1].getActions().back();
-                if (!helper.empty())
+                if (session[Session::getId() - 1].getActions().size() != 0)
                 {
+                    std::string helper = session[Session::getId() - 1].getActions().back();
+
                     if (helper == "grayscale")
                     {
                         for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
@@ -249,20 +260,67 @@ void load()
                         session[Session::getId() - 1].getFormats().pop_back();
                     }
                     session[Session::getId() - 1].getActions().pop_back();
+
                 }
+                else std::cout << "Cannot undo!\n";
             }
             else if (command == "info")
             {
-            std::cout << session[Session::getId() - 1] << "\n";
+                std::cout << session[Session::getId() - 1] << "\n";
             }
-
-
-
+            else if (command == "collage")
+            {
+                std::cin.ignore();
+                std::cin >> direction;
+                std::cin.ignore();
+                std::cin >> image1;
+                std::cin.ignore();
+                std::cin >> image2;
+                std::cin.ignore();
+                std::cin >> outimage;
+                bool flag1 = false;
+                bool flag2 = false;
+               
+                for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
+                {
+                    if (session[Session::getId() - 1].getFormats()[i]->getPath() == image1)
+                    {
+                        flag1 = true; break;
+                    }
+                }
+                for (size_t i = 0; i < session[Session::getId() - 1].getFormats().size(); i++)
+                {
+                    if (session[Session::getId() - 1].getFormats()[i]->getPath() == image2)
+                    {
+                        flag2 = true; break;
+                    }
+                }
+                if (flag1 == true && flag2 == true)
+                {
+                    session[(Session::getId()) - 1].getFormats().push_back(loadAccordingToFormat(outimage));
+                   
+                    session[(Session::getId()) - 1].getFormats().back()->collage(direction, image1, image2, outimage);
+                   
+                    session[(Session::getId()) - 1].addActions("collage");
+                    
+                }
+                else
+                {
+                    std::cout << "unable to make collage!\n";
+                }          
+            }
+        
         } while (command != "close" && command != "exit");
         if (command == "close")
         {
             std::cout << "Successfully closed!\n";
         }
+    }
+    else
+    {
+    std::cout << "Cannot create session without correct images!\n";
+    }
+
 }
 
 
@@ -276,13 +334,13 @@ int main()
         do
         {
             std::cout << ">";
-            if (!command.empty())
-            {
-                std::cin.ignore();
-            }          
+           // if (!command.empty())
+            //{
+           //     std::cin.ignore();
+           // }          
             std::cin >> command;
         } while (!isCommand(command));
-   
+    
         if (command == "load")
         {
             load();
@@ -291,32 +349,16 @@ int main()
         {
             help();
         }
-   
+    
     } while (command != "exit");
     std::cout << "Exiting the program...\n";
-    //PPM ppm;
-    //ppm.open("img.ppm");
-    //ppm.grayscale();
-    //ppm.save("img.ppm");
-
-  
- 
+   // PPM ppm;
+   // ppm.open("img.ppm");
+   // 
+   // ppm.grayscale();
+   // ppm.save("D:/2 семестър/img5.ppm"); 
                
-    // else if (command == "close")
-    // {
-    //     for (size_t i = 0; i < session.size(); i++)
-    //     {
-    //         std::cout << "Successfully closed " << session[i] << '\n';
-    //         break;
-    //     }
-    // }
-    // else if (command == "exit")
-    // {
-    //     std::cout << "Exiting the program...";
-    //     break;
-    // }
-
-
+    
 
   
 //delete[] form;

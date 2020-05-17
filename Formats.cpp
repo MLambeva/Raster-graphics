@@ -1,24 +1,30 @@
 #include"Formats.h"
 
 
-Formats::Formats(std::string ASCIInum, std::string path, int width, int height)
+Formats::Formats (std::string path, std::string ASCIInum, std::string comment, int width, int height)
 {
-	this->ASCIInum = ASCIInum;
 	this->path = path;
+	this->ASCIInum = ASCIInum;
+	this->comment = comment;
 	this->width = width;
 	this->height = height;
 }
 
 Formats::~Formats(){}
 
+std::string Formats::getPath() const
+{
+	return this->path;
+}
+
 std::string Formats::getASCIInum() const
 {
 	return this->ASCIInum;
 }
 
-std::string Formats::getPath() const
+std::string Formats::getComment() const
 {
-	return this->path;
+	return this->comment;
 }
 
 int Formats::getWidth() const
