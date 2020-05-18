@@ -1,40 +1,34 @@
-#ifndef FORMAT_H
-#define FORMAT_H
-#include<string>
+#ifndef PBM_H
+#define PBM_H
 #include<vector>
+#include<string>
 #include<fstream>
 #include<iostream>
-#include<algorithm>
-#include"RGB.h"
+#include<cassert>
 #include"Formats.h"
 
-class PPM:public Formats
+class PBM:public Formats
 {
 private:
-	int maxValue;
-	std::vector<std::vector<RGB>>pixels;
+	std::vector<std::vector<int>> pixels;
 
 public:
-	PPM();
-	~PPM();
+	PBM();
+	~PBM();
 
 	void load(std::string path);//Функция за прочитане на информация от изображения.
 	void saveas(std::string path) const;//Функция за запазване на информация от изображение във файл, различен от изходния.
 	void print(std::ostream& out) const;//Функция за извеждане на информация за даден формат.
-
-	void grayscale();//Променя пикселите да са в сив нюанс.
-	void monochrome();//Променя пикселите да са черни или бели.
+	void grayscale();//Функция, която не прави промени върху изображението, защото то е черно-бяло.
+	void monochrome();//Функция, която не прави промени върху изображението, защото то е черно-бяло.
 	void negative();//Цветово обръщане.
 	void rotation(std::string direction);//Завъртане на изображението на 90° в зависимост от зададената посока.
 	
 	void collage(std::string direction, std::string image1, std::string image2, std::string outimage);//Създаване на колаж.
 
-	void undoGrayscale();//Функция за премахване на сиви нюанси.
-	void undoMonochrome();//Функция за премахване на черно/бели нюанси.
-
+	void undoGrayscale();//Функция, която не прави промени върху изображението, защото то е черно-бяло.
+	void undoMonochrome();//Функция, която не прави промени върху изображението, защото то е черно-бяло.	
 };
-
-
 
 
 #endif

@@ -1,26 +1,19 @@
 #include"Session.h"
 
 
-int Session::id = 0;
+int Session::id = 0;//Статична член данна, която се променя като започва от 0.
 
 Session::Session()
 {
-	this->id = Session::generateId();
+	this->id = Session::generateId();//Идентификационният номер се генерира при всяко използване на конструктура.
 	for (size_t i = 0; i < this->formats.size(); i++)
 	{
 		this->formats[i] = nullptr;
 	}
-	for (size_t i = 0; i < this->actions.size(); i++)
+	for (size_t i = 0; i < this->transformations.size(); i++)
 	{
-		this->actions[i] = nullptr;
+		this->transformations[i] = nullptr;
 	}
-}
-
-Session ::Session(const Session& other)
-{
-	this->id = other.id;
-	this->formats = other.formats;
-	this->actions = other.actions;
 }
 
 int Session::getId()
@@ -33,35 +26,35 @@ std::vector<Formats*>& Session::getFormats()
 	return this->formats;
 }
 
-std::vector<std::string>& Session::getActions()
+std::vector<std::string>& Session::getTransformations()
 {
-	return this->actions;
+	return this->transformations;
 }
 
-void Session::addActions(std::string actions)
+void Session::addTransformations(std::string transformations)//Помощна функциия за добавяне на трансформация.
 {
-	this->actions.push_back(actions);
+	this->transformations.push_back(transformations);
 }
 
-int Session::generateId()
+int Session::generateId()//Генерира идентификационния номер.
 {
 	return ++id;
 }
 
 std::ostream& operator<<(std::ostream& out, const Session& other)
 {
-	out << "Session ID: " << other.id << '\n';
-	out << "Pending transformations: ";
-	for (size_t i = 0; i < other.actions.size(); i++)
-	{
-		out << other.actions[i] << " ";
-	}
-	std::cout << '\n';
+	out << "Session ID: " << other.id << '\n';//Принтира идентификационния номер на сесията.
+	out << "Name of images in the session: ";
 	for (size_t i = 0; i < other.formats.size(); i++)
 	{
-		out << *other.formats[i] << " ";
+		out << other.formats[i]->getPath() << " ";//Извежда имената на изображенията, които са в сесията.
 	}
-	
+	out << '\n';
+	out << "Pending transformations: ";
+	for (size_t i = 0; i < other.transformations.size(); i++)
+	{
+		out << other.transformations[i] << ", ";//Извежда промените, които са настъпили върху изображението.
+	}
 	
 	return out;
 }

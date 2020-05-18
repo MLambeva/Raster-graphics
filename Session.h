@@ -1,6 +1,7 @@
 #ifndef SESSION_H
 #define SESSION_H
 #include<vector>
+#include<string>
 #include<iostream>
 #include"Formats.h"
 
@@ -9,20 +10,19 @@ class Session
 private:
 	static int id;
 	std::vector<Formats*> formats;
-	std::vector<std::string> actions;
+	std::vector<std::string> transformations;
 public:
 	Session();
-	Session(const Session& other);
+	
 	static int getId();
 	std::vector<Formats*>& getFormats();
-	std::vector<std::string>& getActions();///////////?
+	std::vector<std::string>& getTransformations();
 	
-	void addActions(std::string actions);
-	static int generateId();
+	void addTransformations(std::string transformations);//Помощна функциия за добавяне на трансформация.
 
+	static int generateId();//Генерира идентификационния номер.
 
 	friend std::ostream& operator<<(std::ostream& out, const Session& other);
-
 
 };
 

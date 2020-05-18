@@ -3,6 +3,7 @@
 #include<string>
 #include<vector>
 #include<fstream>
+#include<iostream>
 
 class helperFunctions
 {
@@ -11,6 +12,11 @@ public:
 	static std::vector<std::string> findPath(std::string paths);
 	static bool isCorrectFileFormat(std::string path);
 	static bool read(std::string path);
+	static bool isOneDigit(int x);
+	static bool isTwoDigit(int x);
+	static bool isThreeDigit(int x);
+	static bool isCommand(std::string command);
+	static void help();
 	
 };
 

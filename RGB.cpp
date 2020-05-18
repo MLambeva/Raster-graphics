@@ -1,5 +1,4 @@
 #include"RGB.h"
-#include<cassert>
 
 
 int RGB::getRed() const
@@ -43,39 +42,19 @@ RGB RGB::setColor(int red, int green, int blue)
 	return *this;
 }
 
-bool isOneDigit(int x)
-{
-	return x >= 0 && x <= 9;
-}
-
-bool isTwoDigit(int x)
-{
-	return x >= 10 && x <= 99;
-}
-
-bool isThreeDigit(int x)
-{
-	return x >= 100 && x <= 255;
-}
-
 std::ostream& operator<<(std::ostream& out, const RGB& other)
 {
-	//out << '{' << other.red << ',' << other.green << ',' << other.blue << "}";
-	if (isOneDigit(other.red)) out << "  " << other.red << " ";
-	else if (isTwoDigit(other.red)) out << " " << other.red << " ";
-	else if(isThreeDigit(other.red)) out << other.red << " ";
-	if (isOneDigit(other.green)) out << "  " << other.green << " ";
-	else if (isTwoDigit(other.green)) out << " " << other.green << " ";
-	else if (isThreeDigit(other.green))out << other.green << " ";
-	if (isOneDigit(other.blue)) out << "  " << other.blue << "  ";
-	else if (isTwoDigit(other.blue)) out << " " << other.blue << "  ";
-	else if (isThreeDigit(other.blue))out << other.blue << "  ";
-	//out << other.red << " " << other.green << " " << other.blue << " ";
+	//Извеждане на пикселите според това, какво е числото.
+	//По този начин си осигуряваме правилно записване на пиксели във файл.
+	if (helperFunctions::isOneDigit(other.red)) out << "  " << other.red << " ";
+	else if (helperFunctions::isTwoDigit(other.red)) out << " " << other.red << " ";
+	else if(helperFunctions::isThreeDigit(other.red)) out << other.red << " ";
+	if (helperFunctions::isOneDigit(other.green)) out << "  " << other.green << " ";
+	else if (helperFunctions::isTwoDigit(other.green)) out << " " << other.green << " ";
+	else if (helperFunctions::isThreeDigit(other.green))out << other.green << " ";
+	if (helperFunctions::isOneDigit(other.blue)) out << "  " << other.blue << "  ";
+	else if (helperFunctions::isTwoDigit(other.blue)) out << " " << other.blue << "  ";
+	else if (helperFunctions::isThreeDigit(other.blue))out << other.blue << "  ";
+	
 	return out;
 }
-//std::ostream& operator<<(std::ostream& out, const RGB& other)
-//{
-//	//out << '{' << other.red << ',' << other.green << ',' << other.blue << "}";
-//	out << other.red << " " << other.green << " " << other.blue ;
-//		return out;
-//}

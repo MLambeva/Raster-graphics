@@ -3,8 +3,8 @@
 #include"PBM.h"
 #include"Session.h"
 #include"helperFunctions.h"
-//#include<string>
 
+//Глобални променливи
 std::string command;
 std::vector<Session> session = { };
 
@@ -24,35 +24,7 @@ Formats* loadAccordingToFormat(std::string path)
      }
 }
 
-bool isCommand(std::string command)
-{
-    return command == "load" || command == "close" || command == "save" || command == "saveas" || command == "help" || command == "exit"
-        || command == "grayscale" || command == "monochrome" || command == "negative" || command == "rotate" 
-        || command == "undo" || command == "add" || command == "session" || command == "info" || command == "switch"
-        || command == "collage";
-}
 
-
-
-void help()
-{
-    std::cout << "load <image> create session with unique ID.\n"
-        << "close -->closes currently opened file.\n"
-        << "save -->saves the currentrly open file.\n"
-        << "saveas <file> -->saves the currently open file in <file>.\n"
-        << "help -->prints this information.\n"
-        << "exit -->exist the program.\n"
-        << "grayscale --> change the image to grayscale.\n"
-        << "monochrome --> change the image to monochrome.\n"
-        << "negative --> change the image to negative.\n"
-        << "rotate <direction> --> rotate image right ot left.\n"
-        << "undo --> return command back.\n"
-        << "add <image> --> add image to session.\n"
-        << "session info --> display information about session.\n"
-        << "switch <session> --> switch session to another with ID <session>.\n"
-        << "collage <direction> <image1> <image2> <outimage> "
-        << "--> create collage with horizontal ot vertical <direction> and save them in new image <outimage>.\n";
-}
 
 void load()
 {
@@ -85,8 +57,8 @@ void load()
             if (helperFunctions::isCorrectFileFormat(path[i]) && helperFunctions::read(path[i]))
             {
                 helper.getFormats().push_back(loadAccordingToFormat(path[i]));
-                helper.getFormats().back()->open(path[i]);
-                helper.getActions() = {};
+                helper.getFormats().back()->load(path[i]);
+                helper.getTransformations() = {};
 
                 std::cout << "Session with ID: " << helper.getId() << " started!\n";
                 std::cout << "Image " << path[i] << " added!\n";
@@ -114,15 +86,18 @@ void load()
                 }
                                 
 
-            } while (!isCommand(command));
+            } while (!helperFunctions::isCommand(command));
 
             if (command == "saveas")
             {
                 std::cin.ignore();
                 std::getline(std::cin, paths);
-                
-                session[Session::getId() - 1].getFormats()[0]->saveas(paths);
-                std::cout << "Successfully saved another " << session[Session::getId() - 1].getFormats()[0]->getPath() << '\n';
+                if (helperFunctions::findFormat(paths) == helperFunctions::findFormat(session[Session::getId() - 1].getFormats()[0]->getPath()))
+                {
+                    session[Session::getId() - 1].getFormats()[0]->saveas(paths);
+                    std::cout << "Successfully saved another " << session[Session::getId() - 1].getFormats()[0]->getPath() << '\n';
+                }
+                else std::cout << "Incorrect file format!\n";
                 
             }
             else if (command == "save")
@@ -135,23 +110,20 @@ void load()
             }
             else if (command == "help")
             {
-                help();
+                helperFunctions::help();
             }
             else if (command == "add")
             {
-                //paths.clear();
                 std::cin.ignore();
                 std::cin >> paths;
 
                 if (helperFunctions::isCorrectFileFormat(paths) && helperFunctions::read(paths))
                 {
                     session[(Session::getId()) - 1].getFormats().push_back(loadAccordingToFormat(paths));
-                    session[(Session::getId()) - 1].getFormats().back()->open(paths);
-                    session[(Session::getId()) - 1].addActions("add");
+                    session[(Session::getId()) - 1].getFormats().back()->load(paths);
+                    session[(Session::getId()) - 1].addTransformations("add");
                     std::cout << "Successfully added!: " << session[(Session::getId()) - 1].getFormats().back()->getPath() << '\n';
                 }
-
-
             }
             else if (command == "grayscale")
             {
@@ -159,7 +131,7 @@ void load()
                 {
                     session[Session::getId() - 1].getFormats()[i]->grayscale();
                 }
-                session[Session::getId() - 1].getActions().push_back("grayscale");
+                session[Session::getId() - 1].getTransformations().push_back("grayscale");
             }
             else if (command == "monochrome")
             {
@@ -167,7 +139,7 @@ void load()
                 {
                     session[Session::getId() - 1].getFormats()[i]->monochrome();
                 }
-                session[Session::getId() - 1].getActions().push_back("monochrome");
+                session[Session::getId() - 1].getTransformations().push_back("monochrome");
             }
             else if (command == "negative")
             {
@@ -175,7 +147,7 @@ void load()
                 {
                     session[Session::getId() - 1].getFormats()[i]->negative();
                 }
-                session[Session::getId() - 1].getActions().push_back("negative");
+                session[Session::getId() - 1].getTransformations().push_back("negative");
             }
             else if (command == "rotate")
             {
@@ -186,7 +158,7 @@ void load()
                     session[Session::getId() - 1].getFormats()[i]->rotation(direction);
                 }
                 std::string helper = command + " " + direction;
-                session[Session::getId() - 1].addActions(helper);
+                session[Session::getId() - 1].addTransformations(helper);
             }
             else if (command == "switch")
             {
@@ -203,9 +175,9 @@ void load()
                     }
 
                     std::cout << "\nPending transformations: ";
-                    for (size_t i = 0; i < session[id - 1].getActions().size(); i++)
+                    for (size_t i = 0; i < session[id - 1].getTransformations().size(); i++)
                     {
-                        std::cout << session[id - 1].getActions()[i] << ", ";
+                        std::cout << session[id - 1].getTransformations()[i] << ", ";
                     }
                     std::cout << '\n';
                 }
@@ -216,9 +188,9 @@ void load()
             }
             else if (command == "undo")
             {
-                if (session[Session::getId() - 1].getActions().size() != 0)
+                if (session[Session::getId() - 1].getTransformations().size() != 0)
                 {
-                    std::string helper = session[Session::getId() - 1].getActions().back();
+                    std::string helper = session[Session::getId() - 1].getTransformations().back();
 
                     if (helper == "grayscale")
                     {
@@ -259,7 +231,7 @@ void load()
                     {
                         session[Session::getId() - 1].getFormats().pop_back();
                     }
-                    session[Session::getId() - 1].getActions().pop_back();
+                    session[Session::getId() - 1].getTransformations().pop_back();
 
                 }
                 else std::cout << "Cannot undo!\n";
@@ -301,7 +273,7 @@ void load()
                    
                     session[(Session::getId()) - 1].getFormats().back()->collage(direction, image1, image2, outimage);
                    
-                    session[(Session::getId()) - 1].addActions("collage");
+                    session[(Session::getId()) - 1].addTransformations("collage");
                     
                 }
                 else
@@ -334,12 +306,12 @@ int main()
         do
         {
             std::cout << ">";
-           // if (!command.empty())
-            //{
-           //     std::cin.ignore();
-           // }          
+            if (!command.empty())
+            {
+              std::cin.ignore();
+            }          
             std::cin >> command;
-        } while (!isCommand(command));
+        } while (!helperFunctions::isCommand(command));
     
         if (command == "load")
         {
@@ -347,18 +319,13 @@ int main()
         }
         else if (command == "help")
         {
-            help();
+            helperFunctions::help();
         }
     
     } while (command != "exit");
     std::cout << "Exiting the program...\n";
-   // PPM ppm;
-   // ppm.open("img.ppm");
-   // 
-   // ppm.grayscale();
-   // ppm.save("D:/2 семестър/img5.ppm"); 
-               
-    
+
+   
 
   
 //delete[] form;

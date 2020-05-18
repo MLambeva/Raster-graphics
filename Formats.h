@@ -3,6 +3,7 @@
 #include<string>
 #include<vector>
 
+
 class Formats
 {
 protected:
@@ -14,21 +15,16 @@ protected:
 
 public:
 	Formats() = default;
-	Formats(std::string path, std::string ASCIInum, std::string comment, int width, int height);
 	virtual ~Formats();
 
 	std::string getPath() const;
-	std::string getASCIInum() const;
-	std::string getComment() const;
-	int getWidth() const;
-	int getHeight() const;
+	
 
-	void setWidth(int width);
-	void setHeight(int height);
-
+	//Често виртуални функции.
+	virtual void load(std::string path) = 0;
+	virtual void saveas(std::string path) const = 0;
 	virtual void print(std::ostream& out) const = 0;
-	virtual void open(std::string path) = 0;
-	virtual void saveas(std::string path) = 0;
+
 	virtual void grayscale() = 0;
 	virtual void monochrome() = 0;
 	virtual void negative() = 0;
@@ -37,15 +33,9 @@ public:
 
 	virtual void undoGrayscale() = 0;
 	virtual void undoMonochrome() = 0;
-	
+
+	friend std::ostream& operator<<(std::ostream& out, const Formats& other);	
 };
-
-inline std::ostream& operator<<(std::ostream& out, const Formats& other)
-{
-	other.print(out);
-	return out;
-}
-
 
 
 #endif
