@@ -4,12 +4,15 @@
 #include<vector>
 #include<fstream>
 #include<iostream>
+#include "Session.h"
+#include"Formats.h"
 
 class helperFunctions
 {
 public:
 	static std::string findFormat(std::string path);
 	static std::vector<std::string> findPath(std::string paths);
+	static bool isCorrectFileExtension(std::string extension);
 	static bool isCorrectFileFormat(std::string path);
 	static bool read(std::string path);
 	static bool isOneDigit(int x);
@@ -18,6 +21,8 @@ public:
 	static bool isCommand(std::string command);
 	static void help();
 	
+
+
 };
 
 

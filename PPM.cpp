@@ -105,9 +105,7 @@ void PPM::grayscale()//Променя пикселите да са в сив нюанс.
 			if ((this->pixels[i][j].getRed() != this->pixels[i][j].getGreen() || this->pixels[i][j].getRed() != this->pixels[i][j].getBlue()))
 			{
 				//Формула от tutorialspoint.com
-				this->pixels[i][j].setRed(0.3 * this->pixels[i][j].getRed());
-				this->pixels[i][j].setGreen(0.59 * this->pixels[i][j].getGreen());
-				this->pixels[i][j].setBlue(0.11 * this->pixels[i][j].getBlue());
+				this->pixels[i][j].setColor(0.3 * this->pixels[i][j].getRed(), 0.59 * this->pixels[i][j].getGreen(), 0.11 * this->pixels[i][j].getBlue());
 			}
 		}
 	}
@@ -115,16 +113,21 @@ void PPM::grayscale()//Променя пикселите да са в сив нюанс.
 
 void PPM::monochrome()//Променя пикселите да са черни или бели.
 {
+	(*this).grayscale();
 	for (int i = 0; i < this->height; i++)
 	{
 		for (int j = 0; j < this->width; j++)
 		{
 			if (this->pixels[i][j].getRed() != this->pixels[i][j].getGreen() || this->pixels[i][j].getRed() != this->pixels[i][j].getBlue())
 			{
-				this->pixels[i][j].setColor((0.2125 * this->pixels[i][j].getRed()), (0.7154 * this->pixels[i][j].getGreen()), (0.0721 * this->pixels[i][j].getBlue()));
-				//this->pixels[i][j].setRed(255);
-				//this->pixels[i][j].setGreen(255);
-				//this->pixels[i][j].setBlue(255);
+				if (this->pixels[i][j].getRed() >= 123)
+				{
+					this->pixels[i][j].setColor(255,255,255);
+				}
+				else if (this->pixels[i][j].getRed() < 123)
+				{
+					this->pixels[i][j].setColor(0, 0, 0);
+				}
 			}
 		}
 	}
@@ -136,9 +139,8 @@ void PPM::negative()//Цветово обръщане.
 	{
 		for (int j = 0; j < this->width; j++)
 		{
-			this->pixels[i][j].setRed(this->maxValue - this->pixels[i][j].getRed());//255
-			this->pixels[i][j].setGreen(this->maxValue - this->pixels[i][j].getGreen());
-			this->pixels[i][j].setBlue(this->maxValue - this->pixels[i][j].getBlue());
+			this->pixels[i][j].setColor(this->maxValue - this->pixels[i][j].getRed(), 
+			this->maxValue - this->pixels[i][j].getGreen(), this->maxValue - this->pixels[i][j].getBlue());
 		}
 	}
 }

@@ -47,7 +47,7 @@ std::ostream& operator<<(std::ostream& out, const Session& other)
 	out << "Name of images in the session: ";
 	for (size_t i = 0; i < other.formats.size(); i++)
 	{
-		out << other.formats[i]->getPath() << " ";//»звежда имената на изображени€та, които са в сеси€та.
+		out << other.formats[i]->getPath() << ", ";//»звежда имената на изображени€та, които са в сеси€та.
 	}
 	out << '\n';
 	out << "Pending transformations: ";

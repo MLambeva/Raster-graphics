@@ -1,5 +1,6 @@
 #include"helperFunctions.h"
 
+
 std::string helperFunctions::findFormat(std::string path)
 {
     std::string helper;
@@ -11,29 +12,62 @@ std::string helperFunctions::findFormat(std::string path)
     return helper;
 }
 
-std::vector<std::string> helperFunctions::findPath(std::string paths)
-{
-    std::vector<std::string> saver;
-    std::string helper;
-    for (size_t i = 0; i < paths.size(); i++)
-    {
-        if ((int)paths[i] != 32)
-        {
-            helper.push_back(paths[i]);
-        }
-        else
-        {
-            saver.push_back(helper);
-            helper.clear();
-        }
-    }
-    saver.push_back(helper);
-    return saver;
-}
-
 bool helperFunctions::isCorrectFileFormat(std::string path)
 {
     return findFormat(path) == "ppm" || findFormat(path) == "pgm" || findFormat(path) == "pbm";
+}
+
+bool helperFunctions::isCorrectFileExtension(std::string extension)
+{
+    return extension == "ppm" || extension == "pgm" || extension == "pbm";
+}
+
+std::vector<std::string> helperFunctions::findPath(std::string paths)
+{
+    //std::vector<std::string> saver;
+    //std::string helper;
+    //for (size_t i = 0; i < paths.size(); i++)
+    //{
+    //    if ((int)paths[i] != 32)
+    //    {
+    //        helper.push_back(paths[i]);
+    //    }
+    //    else
+    //    {
+    //        saver.push_back(helper);
+    //        helper.clear();
+    //    }
+    //}
+    //saver.push_back(helper);
+    //return saver;
+    std::vector<std::string> saver;
+    std::string helper;
+    for (int i = paths.size() - 1; i >= 0; i--)
+    {
+        if ((int)paths[i] != 32)
+        {
+            helper = paths[i] + helper;
+        }
+        else if ((int)paths[i] == 32)
+        {
+            std::string help;
+            for (int j = i - 1; j >= i - 3 && j>=0; j--)
+            {
+                help = paths[j] + help;
+            }
+            if (isCorrectFileExtension(help))
+            {  
+                saver.push_back(helper);
+                helper.clear();
+            }
+            else
+            {              
+                helper = paths[i] + helper;            
+            }
+        }    
+    }
+    saver.push_back(helper);
+    return saver;
 }
 
 bool helperFunctions::read(std::string path)
@@ -84,3 +118,4 @@ void helperFunctions::help()
         << "collage <direction> <image1> <image2> <outimage> "
         << "--> create collage with horizontal ot vertical <direction> and save them in new image <outimage>.\n";
 }
+

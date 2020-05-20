@@ -5,6 +5,7 @@
 #include<fstream>
 #include<iostream>
 #include<algorithm>
+#include<functional>
 #include"RGB.h"
 #include"Formats.h"
 

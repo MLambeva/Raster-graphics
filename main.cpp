@@ -24,7 +24,22 @@ Formats* loadAccordingToFormat(std::string path)
      }
 }
 
-
+///////////////////??????????????????
+void deleteAccordingToFormat(std::string path)
+{
+    if (helperFunctions::findFormat(path) == "ppm")
+    {
+        delete new PPM;
+    }
+    else if (helperFunctions::findFormat(path) == "pgm")
+    {
+        delete new PGM;
+    }
+    else if (helperFunctions::findFormat(path) == "pbm")
+    {
+        delete new PBM;
+    }
+}
 
 void load()
 {
@@ -39,7 +54,7 @@ void load()
     path = helperFunctions::findPath(paths);
     
     int counter = 0;
-    for (size_t i = 0; i < path.size(); i++)
+    for (int i = 0; i < path.size(); i++)
     {
         if (helperFunctions::isCorrectFileFormat(path[i]) && helperFunctions::read(path[i]))
         {
@@ -51,16 +66,15 @@ void load()
     {
         Session helper;
 
-
-        for (size_t i = 0; i < path.size(); i++)
+        std::cout << "Session with ID: " << helper.getId() << " started!\n";
+        for (int i = path.size() - 1; i >= 0; i--)
         {
             if (helperFunctions::isCorrectFileFormat(path[i]) && helperFunctions::read(path[i]))
             {
                 helper.getFormats().push_back(loadAccordingToFormat(path[i]));
                 helper.getFormats().back()->load(path[i]);
                 helper.getTransformations() = {};
-
-                std::cout << "Session with ID: " << helper.getId() << " started!\n";
+                deleteAccordingToFormat(path[i]);////////////???????????????
                 std::cout << "Image " << path[i] << " added!\n";
             }
             else
@@ -83,8 +97,7 @@ void load()
                 {
                     std::cin >> command;
                     if (command == "info") break;
-                }
-                                
+                }                               
 
             } while (!helperFunctions::isCommand(command));
 
@@ -115,14 +128,18 @@ void load()
             else if (command == "add")
             {
                 std::cin.ignore();
-                std::cin >> paths;
-
+                std::getline(std::cin, paths);
                 if (helperFunctions::isCorrectFileFormat(paths) && helperFunctions::read(paths))
                 {
                     session[(Session::getId()) - 1].getFormats().push_back(loadAccordingToFormat(paths));
                     session[(Session::getId()) - 1].getFormats().back()->load(paths);
                     session[(Session::getId()) - 1].addTransformations("add");
                     std::cout << "Successfully added!: " << session[(Session::getId()) - 1].getFormats().back()->getPath() << '\n';
+                    deleteAccordingToFormat(paths);
+                }
+                else
+                {
+                    std::cout << "Unsuccessfully added!: " << paths << '\n';
                 }
             }
             else if (command == "grayscale")
@@ -278,7 +295,7 @@ void load()
                 }
                 else
                 {
-                    std::cout << "unable to make collage!\n";
+                    std::cout << "Unable to make collage!\n";
                 }          
             }
         
@@ -297,7 +314,7 @@ void load()
 
 
 
-
+////////////////////destryktyr i monochrome!!!
 
 int main()
 {
@@ -305,11 +322,7 @@ int main()
     {
         do
         {
-            std::cout << ">";
-            if (!command.empty())
-            {
-              std::cin.ignore();
-            }          
+            std::cout << ">";         
             std::cin >> command;
         } while (!helperFunctions::isCommand(command));
     

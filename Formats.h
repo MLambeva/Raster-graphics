@@ -18,6 +18,8 @@ public:
 	virtual ~Formats();
 
 	std::string getPath() const;
+	int getWidth() const;
+	int getHeight() const;
 	
 
 	//Често виртуални функции.
@@ -35,6 +37,8 @@ public:
 	virtual void undoMonochrome() = 0;
 
 	friend std::ostream& operator<<(std::ostream& out, const Formats& other);	
+
+	
 };
 
 
