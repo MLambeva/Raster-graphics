@@ -11,34 +11,18 @@ std::vector<Session> session = { };
 Formats* loadAccordingToFormat(std::string path)
 {
     if (helperFunctions::findFormat(path) == "ppm")
-     {
-        return new PPM;
-     }
-     else if (helperFunctions::findFormat(path) == "pgm")
-     {
-        return new PGM;
-     }
-     else if (helperFunctions::findFormat(path) == "pbm")
-     {
-        return new PBM;
-     }
-}
-
-///////////////////??????????????????
-void deleteAccordingToFormat(std::string path)
-{
-    if (helperFunctions::findFormat(path) == "ppm")
     {
-        delete new PPM;
+        return new PPM;
     }
     else if (helperFunctions::findFormat(path) == "pgm")
     {
-        delete new PGM;
+        return new PGM;
     }
     else if (helperFunctions::findFormat(path) == "pbm")
     {
-        delete new PBM;
+        return new PBM;
     }
+    else return nullptr;
 }
 
 void load()
@@ -54,7 +38,7 @@ void load()
     path = helperFunctions::findPath(paths);
     
     int counter = 0;
-    for (int i = 0; i < path.size(); i++)
+    for (size_t i = 0; i < path.size(); i++)
     {
         if (helperFunctions::isCorrectFileFormat(path[i]) && helperFunctions::read(path[i]))
         {
@@ -74,7 +58,6 @@ void load()
                 helper.getFormats().push_back(loadAccordingToFormat(path[i]));
                 helper.getFormats().back()->load(path[i]);
                 helper.getTransformations() = {};
-                deleteAccordingToFormat(path[i]);////////////???????????????
                 std::cout << "Image " << path[i] << " added!\n";
             }
             else
@@ -135,7 +118,6 @@ void load()
                     session[(Session::getId()) - 1].getFormats().back()->load(paths);
                     session[(Session::getId()) - 1].addTransformations("add");
                     std::cout << "Successfully added!: " << session[(Session::getId()) - 1].getFormats().back()->getPath() << '\n';
-                    deleteAccordingToFormat(paths);
                 }
                 else
                 {
@@ -179,7 +161,7 @@ void load()
             }
             else if (command == "switch")
             {
-                int id;
+                size_t id;
                 std::cin.ignore();
                 std::cin >> id;
                 if (id >= 1 && id <= session.size())
@@ -304,11 +286,16 @@ void load()
         {
             std::cout << "Successfully closed!\n";
         }
+        for (size_t i = 0; i < helper.getFormats().size(); i++)
+        {
+            delete helper.getFormats()[i];
+        }
     }
     else
     {
     std::cout << "Cannot create session without correct images!\n";
     }
+
 
 }
 
@@ -339,8 +326,8 @@ int main()
     std::cout << "Exiting the program...\n";
 
    
-
+    
   
-//delete[] form;
+
   return 0;
 }

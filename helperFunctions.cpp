@@ -24,22 +24,6 @@ bool helperFunctions::isCorrectFileExtension(std::string extension)
 
 std::vector<std::string> helperFunctions::findPath(std::string paths)
 {
-    //std::vector<std::string> saver;
-    //std::string helper;
-    //for (size_t i = 0; i < paths.size(); i++)
-    //{
-    //    if ((int)paths[i] != 32)
-    //    {
-    //        helper.push_back(paths[i]);
-    //    }
-    //    else
-    //    {
-    //        saver.push_back(helper);
-    //        helper.clear();
-    //    }
-    //}
-    //saver.push_back(helper);
-    //return saver;
     std::vector<std::string> saver;
     std::string helper;
     for (int i = paths.size() - 1; i >= 0; i--)

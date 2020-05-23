@@ -10,8 +10,8 @@ protected:
 	std::string path;
 	std::string ASCIInum;
 	std::string comment;
-	int width;
-	int height;
+	int width = 0;
+	int height = 0;
 
 public:
 	Formats() = default;
@@ -27,8 +27,8 @@ public:
 	virtual void saveas(std::string path) const = 0;
 	virtual void print(std::ostream& out) const = 0;
 
-	virtual void grayscale() = 0;
-	virtual void monochrome() = 0;
+	virtual void grayscale() = 0;//////////////
+	virtual void monochrome() = 0;/////////////////////
 	virtual void negative() = 0;
 	virtual void rotation(std::string direction) = 0;
 	virtual void collage(std::string direction, std::string image1, std::string image2, std::string outimage) = 0;
