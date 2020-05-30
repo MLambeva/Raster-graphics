@@ -16,6 +16,14 @@ Session::Session()
 	}
 }
 
+//Session::~Session()
+//{
+//	for (size_t i = 0; i < this->formats.size(); i++)
+//	{
+//		delete this->formats[i];
+//	}
+//}
+
 int Session::getId()
 {
 	return id;

@@ -41,13 +41,13 @@ void PBM::load(std::string path)//Функция за прочитане на информация от изображе
 	
 	for (int i = 0; i < this->height; i++)
 	{
-		int x;
-		std::vector<int> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.	
+		char x;
+		std::vector<bool> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.	
 		for (int j = 0; j < this->width; j++)
 		{
 			input >> x;//Четем всеки пиксел.
-			assert(x == 0 || x == 1);
-			helper.push_back(x);//Добавяме всеки пиксел.
+			assert(x == '0' || x == '1');
+			helper.push_back(x - '0');//Добавяме всеки пиксел.
 		}
 		this->pixels.push_back(helper);//Когато обходим реда, добавяме пикселите от целия ред.
 	}	
@@ -67,7 +67,7 @@ void PBM::saveas(std::string path) const//Функция за запазване на информация от 
 		for (int j = 0; j < this->width; j++)
 		{
 			assert(this->pixels[i][j] == 0 || this->pixels[i][j] == 1);
-			saveas << this->pixels[i][j];//Записваме всеки пиксел.
+			saveas << ' ' << this->pixels[i][j] << ' ';//Записваме всеки пиксел.
 		}
 		saveas << '\n';
 	}
@@ -93,9 +93,10 @@ void PBM::print(std::ostream& out) const//Функция за извеждане на информация за 
 	}
 }
 
-void PBM::grayscale() {}//Функция, която не прави промени върху изображението, защото то е черно-бяло.
-
-void PBM::monochrome() {}//Функция, която не прави промени върху изображението, защото то е черно-бяло.
+std::vector<std::vector<bool>> PBM::getPixels() const
+{
+	return this->pixels;
+}
 
 void PBM::negative() //Цветово обръщане.
 {
@@ -110,7 +111,7 @@ void PBM::negative() //Цветово обръщане.
 
 void PBM::rotation(std::string direction) //Завъртане на изображението на 90° в зависимост от зададената посока.
 {
-	std::vector<std::vector<int>> saver;//Помощна променлива, в която запазваме пикселите на цялото изображение.
+	std::vector<std::vector<bool>> saver;//Помощна променлива, в която запазваме пикселите на цялото изображение.
 
 	if (direction == "left")
 	{
@@ -118,14 +119,13 @@ void PBM::rotation(std::string direction) //Завъртане на изображението на 90° в 
 				
 		for (int i = this->height - 1; i >= 0; i--)
 		{
-			std::vector<int> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
+			std::vector<bool> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
 			for (int j = 0; j < this->width; j++)
 			{
 				helper.push_back(this->pixels[j][i]);
 			}
 			saver.push_back(helper);
-		}
-		
+		}		
 	}
 	else if (direction == "right")
 	{
@@ -133,7 +133,7 @@ void PBM::rotation(std::string direction) //Завъртане на изображението на 90° в 
 
 		for (int i = 0; i < this->height; i++)
 		{
-			std::vector<int> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
+			std::vector<bool> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
 			for (int j = this->width - 1; j >= 0; j--)
 			{
 				helper.push_back(this->pixels[j][i]);
@@ -153,7 +153,7 @@ void PBM::collage(std::string direction, std::string image1, std::string image2,
 {
 	/*Създаване на колаж от две изображения (<image1>, <image2>), които са от един и същ формат и еднаква размерност в зависимост от зададена посока -
 	хоризонтална или вертикална, като полученото изабражение се записва в ново изображение <outimage>*/
-	std::vector<std::vector<int>> saver;//Помощна променлива, в която запазваме пикселите на цялото изображение.
+	std::vector<std::vector<bool>> saver;//Помощна променлива, в която запазваме пикселите на цялото изображение.
 
 	PBM firstImage;//Обект от текущия клас, в който ще съхраняваме данните за първото изображение.
 	firstImage.load(image1);
@@ -172,7 +172,7 @@ void PBM::collage(std::string direction, std::string image1, std::string image2,
 			this->height = firstImage.height;//Височината остава същата.
 			for (int i = 0; i < this->height; i++)
 			{
-				std::vector<int> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
+				std::vector<bool> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
 				for (int j = 0; j < firstImage.width; j++)//Първо обхождаме реда на първото изображение.
 				{
 					helper.push_back(firstImage.pixels[i][j]);//Добавяме стойностите.
@@ -197,7 +197,7 @@ void PBM::collage(std::string direction, std::string image1, std::string image2,
 			size_t k = 0;//Трябва ни допълнителен брояч при обхождане на второто изображение.
 			for (int i = 0; i < this->height; i++)
 			{
-				std::vector<int> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
+				std::vector<bool> helper;//Помощна променлива, в която запазваме пикселите на всеки ред.
 				if (i < firstImage.height)
 				{
 					//Обхождане на първо изабражение.
@@ -209,7 +209,7 @@ void PBM::collage(std::string direction, std::string image1, std::string image2,
 				else if (i >= firstImage.height)
 				{
 					//Обхождане на второ изображение.
-					for (size_t j = 0; j < this->width; j++)
+					for (int j = 0; j < this->width; j++)
 					{
 						helper.push_back(secondImage.pixels[k][j]);
 					}
@@ -231,6 +231,3 @@ void PBM::collage(std::string direction, std::string image1, std::string image2,
 	}
 }
 
-void PBM::undoGrayscale() {}//Функция, която не прави промени върху изображението, защото то е черно-бяло.
-
-void PBM::undoMonochrome() {}//Функция, която не прави промени върху изображението, защото то е черно-бяло.

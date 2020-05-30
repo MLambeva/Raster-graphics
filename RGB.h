@@ -3,7 +3,7 @@
 #include<string>
 #include<iostream>
 #include<cassert>
-#include "helperFunctions.h"
+#include "Formats.h"
 
 //Чрез този клас лесно ще четем .ppm изображение от файл, защото той обособява един пиксел.
 class RGB 

@@ -46,15 +46,15 @@ std::ostream& operator<<(std::ostream& out, const RGB& other)
 {
 	//Извеждане на пикселите според това, какво е числото.
 	//По този начин си осигуряваме правилно записване на пиксели във файл.
-	if (helperFunctions::isOneDigit(other.red)) out << "  " << other.red << " ";
-	else if (helperFunctions::isTwoDigit(other.red)) out << " " << other.red << " ";
-	else if(helperFunctions::isThreeDigit(other.red)) out << other.red << " ";
-	if (helperFunctions::isOneDigit(other.green)) out << "  " << other.green << " ";
-	else if (helperFunctions::isTwoDigit(other.green)) out << " " << other.green << " ";
-	else if (helperFunctions::isThreeDigit(other.green))out << other.green << " ";
-	if (helperFunctions::isOneDigit(other.blue)) out << "  " << other.blue << "  ";
-	else if (helperFunctions::isTwoDigit(other.blue)) out << " " << other.blue << "  ";
-	else if (helperFunctions::isThreeDigit(other.blue))out << other.blue << "  ";
+	if (Formats::isOneDigit(other.red)) out << "  " << other.red << " ";
+	else if (Formats::isTwoDigit(other.red)) out << " " << other.red << " ";
+	else if(Formats::isThreeDigit(other.red)) out << other.red << " ";
+	if (Formats::isOneDigit(other.green)) out << "  " << other.green << " ";
+	else if (Formats::isTwoDigit(other.green)) out << " " << other.green << " ";
+	else if (Formats::isThreeDigit(other.green))out << other.green << " ";
+	if (Formats::isOneDigit(other.blue)) out << "  " << other.blue << "  ";
+	else if (Formats::isTwoDigit(other.blue)) out << " " << other.blue << "  ";
+	else if (Formats::isThreeDigit(other.blue))out << other.blue << "  ";
 	
 	return out;
 }

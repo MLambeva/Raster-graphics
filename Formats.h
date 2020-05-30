@@ -2,6 +2,7 @@
 #define FORMATS_H
 #include<string>
 #include<vector>
+#include<iostream>
 
 
 class Formats
@@ -27,18 +28,21 @@ public:
 	virtual void saveas(std::string path) const = 0;
 	virtual void print(std::ostream& out) const = 0;
 
-	virtual void grayscale() = 0;//////////////
-	virtual void monochrome() = 0;/////////////////////
+	virtual void grayscale();	
+	virtual void monochrome();
+
 	virtual void negative() = 0;
 	virtual void rotation(std::string direction) = 0;
 	virtual void collage(std::string direction, std::string image1, std::string image2, std::string outimage) = 0;
 
-	virtual void undoGrayscale() = 0;
-	virtual void undoMonochrome() = 0;
+	virtual void undoGrayscale();
+	virtual void undoMonochrome();
 
 	friend std::ostream& operator<<(std::ostream& out, const Formats& other);	
 
-	
+	static bool isOneDigit(int x);
+	static bool isTwoDigit(int x);
+	static bool isThreeDigit(int x);	
 };
 
 

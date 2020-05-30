@@ -62,14 +62,16 @@ void PGM::saveas(std::string path) const//Функция за запазване на информация от 
     
     for (int i = 0; i < this->height; i++)
     {
-    	for (size_t j = 0; j < this->width; j++)
+    	for (int j = 0; j < this->width; j++)
     	{
+			//Записваме всеки пиксел.
 			assert(this->pixels[i][j] >= 0 && this->pixels[i][j] <= this->maxValue);
-    		saveas << this->pixels[i][j];//Записваме всеки пиксел.
+			if(Formats::isOneDigit(this->pixels[i][j])) saveas << "  " << this->pixels[i][j] << " ";
+			else if (Formats::isTwoDigit(this->pixels[i][j])) saveas << " " << this->pixels[i][j] << " ";
+			else if (Formats::isThreeDigit(this->pixels[i][j])) saveas << this->pixels[i][j] << " ";
     	}
     	saveas << '\n';
-    }
-    
+    }    
     saveas.close();//Затваряме файла.	
 }
 
@@ -83,17 +85,17 @@ void PGM::print(std::ostream& out) const//Функция за извеждане на информация за 
 	out << "Pixels:\n";
 	for (int i = 0; i < this->height; i++)
 	{
-		for (size_t j = 0; j < this->width; j++)
+		for (int j = 0; j < this->width; j++)
 		{
-			if (helperFunctions::isOneDigit(this->pixels[i][j]))
+			if (Formats::isOneDigit(this->pixels[i][j]))
 			{
 				out << "  " << this->pixels[i][j] << " ";
 			}
-			else if (helperFunctions::isTwoDigit(this->pixels[i][j]))
+			else if (Formats::isTwoDigit(this->pixels[i][j]))
 			{
 				out << " " << this->pixels[i][j] << " ";
 			}
-			else if (helperFunctions::isThreeDigit(this->pixels[i][j]))
+			else if (Formats::isThreeDigit(this->pixels[i][j]))
 			{
 				out << this->pixels[i][j] << " ";
 			}
@@ -102,9 +104,10 @@ void PGM::print(std::ostream& out) const//Функция за извеждане на информация за 
 	}
 }
 
-void PGM::grayscale(){}//Функция, която не прави промени върху изображението, защото то е черно-бяло.
-
-void PGM::monochrome() {}//Функция, която не прави промени върху изображението, защото то е черно-бяло.
+std::vector<std::vector<int>> PGM::getPixels() const
+{
+	return this->pixels;
+}
 
 void PGM::negative() //Цветово обръщане.
 {
@@ -219,7 +222,7 @@ void PGM::collage(std::string direction, std::string image1, std::string image2,
 				else if (i >= firstImage.height)
 				{
 					//Обхождане на второ изображение.
-					for (size_t j = 0; j < this->width; j++)
+					for (int j = 0; j < this->width; j++)
 					{
 						helper.push_back(secondImage.pixels[k][j]);
 					}
@@ -241,6 +244,3 @@ void PGM::collage(std::string direction, std::string image1, std::string image2,
 	}
 }
 
-void PGM::undoGrayscale() {}//Функция, която не прави промени върху изображението, защото то е черно-бяло.
-
-void PGM::undoMonochrome() {}//Функция, която не прави промени върху изображението, защото то е черно-бяло.

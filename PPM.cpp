@@ -68,7 +68,7 @@ void PPM::saveas(std::string path) const//Функция за запазване на информация от 
 
 	for (int i = 0; i < this->height; i++)
 	{
-		for (size_t j = 0; j < this->width; j++)
+		for (int j = 0; j < this->width; j++)
 		{
 			saveas << this->pixels[i][j];//Записваме всеки пиксел.
 		}
@@ -105,7 +105,7 @@ void PPM::grayscale()//Променя пикселите да са в сив нюанс.
 			if ((this->pixels[i][j].getRed() != this->pixels[i][j].getGreen() || this->pixels[i][j].getRed() != this->pixels[i][j].getBlue()))
 			{
 				//Формула от tutorialspoint.com
-				this->pixels[i][j].setColor(0.3 * this->pixels[i][j].getRed(), 0.59 * this->pixels[i][j].getGreen(), 0.11 * this->pixels[i][j].getBlue());
+				this->pixels[i][j].setColor((int)(0.3 * this->pixels[i][j].getRed()), (int)(0.59 * this->pixels[i][j].getGreen()), (int)(0.11 * this->pixels[i][j].getBlue()));
 			}
 		}
 	}
@@ -113,6 +113,11 @@ void PPM::grayscale()//Променя пикселите да са в сив нюанс.
 
 void PPM::monochrome()//Променя пикселите да са черни или бели.
 {
+	/*Алгоритъмът е следния:
+	1.Променяме изабражението чрез grayscale, за да стане само с сиви нюанси.
+	2.Избираме си някакво число, което ще бъде граница. В случая съм си избрала 123.
+	3.Ако червеният пиксел е >= 123, то пикселите стават {255, 255, 255}, т.е. бели.
+	  Ако червеният пиксел е <123, то пикселите стават {0, 0, 0}, т.е. черни.*/
 	(*this).grayscale();
 	for (int i = 0; i < this->height; i++)
 	{
@@ -246,7 +251,7 @@ void PPM::collage(std::string direction, std::string image1, std::string image2,
 				else if (i >= firstImage.height)
 				{
 					//Обхождане на второ изображение.
-					for (size_t j = 0; j < this->width; j++)
+					for (int j = 0; j < this->width; j++)
 					{
 						helper.push_back(secondImage.pixels[k][j]);
 					}
@@ -277,9 +282,9 @@ void PPM::undoGrayscale()//Функция за премахване на сиви нюанси.
 			if ((this->pixels[i][j].getRed() != this->pixels[i][j].getGreen() || this->pixels[i][j].getRed() != this->pixels[i][j].getBlue()))
 			{
 				//Формула от tutorialspoint.com
-				this->pixels[i][j].setRed(this->pixels[i][j].getRed()/0.3);
-				this->pixels[i][j].setGreen(this->pixels[i][j].getGreen()/ 0.59);
-				this->pixels[i][j].setBlue(this->pixels[i][j].getBlue()/ 0.11);
+				this->pixels[i][j].setRed((int)(this->pixels[i][j].getRed()/0.3));
+				this->pixels[i][j].setGreen((int)(this->pixels[i][j].getGreen()/ 0.59));
+				this->pixels[i][j].setBlue((int)(this->pixels[i][j].getBlue()/ 0.11));
 			}
 		}
 	}

@@ -13,6 +13,7 @@ private:
 	std::vector<std::string> transformations;
 public:
 	Session();
+	//~Session();
 	
 	static int getId();
 	std::vector<Formats*>& getFormats();
