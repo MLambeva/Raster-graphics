@@ -1,9 +1,7 @@
 #include"Formats.h"
 
 
-Formats::~Formats()
-{
-}
+Formats::~Formats(){}
 
 std::string Formats::getPath() const
 {

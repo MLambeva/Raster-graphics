@@ -1,8 +1,7 @@
 #include"Editor.h"
 
-
-std::vector<Session> session = { };
-std::string command;
+std::vector<Session> Editor::session;
+std::string Editor::command;
 
 Formats* Editor::loadAccordingToFormat(std::string path)
 {//Връща обект към формата, който съответства на зададения адрес.
@@ -108,11 +107,11 @@ bool Editor::isCorrectFileFormat(std::string path)//Проверява по даден адрес дал
 
 void Editor::addEffectToPPM(Session& other, std::string effect)//Помощна функция за добавяне на трансформация в дадена сесия.
 {//Използва се само при ".ppm" формат, когато изпълняваме функциите "grayscale" и "monochrome", защото те се отнасят само за този формат.
-    for (size_t i = 0; i < other.getFormats().size(); i++)
+    for (size_t i = 0; i < other.Formats().size(); i++)
     {
-        if (findFormat(other.getFormats()[i]->getPath()) == "ppm")
+        if (findFormat(other.Formats()[i]->getPath()) == "ppm")
         {
-            other.getTransformations().push_back(effect);
+            other.Transformations().push_back(effect);
             break;
         }
     }
@@ -140,60 +139,62 @@ int Editor::countExistedImage(std::vector<std::string> path)
 
 void Editor::commandGrayscale(Session& other)
 {
-    for (size_t i = 0; i < other.getFormats().size(); i++)
+    for (size_t i = 0; i < other.Formats().size(); i++)
     {
-        other.getFormats()[i]->grayscale();
+        other.Formats()[i]->grayscale();
     }
     addEffectToPPM(other, "grayscale");//Добавя, че е извършена трансформация само ако има поне едно изображение от ".ppm" формат.  
 }
 
 void Editor::commandMonochrome(Session& other)
 {
-    for (size_t i = 0; i < other.getFormats().size(); i++)
+    for (size_t i = 0; i < other.Formats().size(); i++)
     {
-        other.getFormats()[i]->monochrome();
+        other.Formats()[i]->monochrome();
     }
     addEffectToPPM(other, "monochrome"); //Добавя, че е извършена трансформация само ако има поне едно изображение от ".ppm" формат.  
 }
 
 void Editor::commandNegative(Session& other)
 {
-    for (size_t i = 0; i < other.getFormats().size(); i++)
+    for (size_t i = 0; i < other.Formats().size(); i++)
     {
-        other.getFormats()[i]->negative();
+        other.Formats()[i]->negative();
     }
-    other.getTransformations().push_back("negative");
+    other.Transformations().push_back("negative");
 }
 
 void Editor::commandSaveas(Session& other, std::string paths)
 {
     std::cin.ignore();
     std::getline(std::cin, paths);//Въвеждаме къде и с какво име искаме да запазим първото заредено изображение в сесията.
-    if (findFormat(paths) == findFormat(other.getFormats()[0]->getPath()))
+    if (findFormat(paths) == findFormat(other.Formats()[0]->getPath()))
     {//Ако има съвпадение на разширението на изображението и въведеното разширение, то тогава го записваме.
-        other.getFormats()[0]->saveas(paths);
-        std::cout << "Successfully saved another " << other.getFormats()[0]->getPath() << '\n';
-    }
-    else std::cout << "Incorrect file format!\n";
+        other.Formats()[0]->saveas(paths);
+        std::cout << "Successfully saved another " << other.Formats()[0]->getPath() << '\n';
+        other.Transformations().clear();
+    }    
+    else std::cout << "Incorrect file format!\n";   
 }
 
 void Editor::commandSave(Session& other)
 {
-    for (size_t i = 0; i < other.getFormats().size(); i++)
+    for (size_t i = 0; i < other.Formats().size(); i++)
     {
-        other.getFormats()[i]->saveas(other.getFormats()[i]->getPath());
-        std::cout << "Successfully saved " << other.getFormats()[i]->getPath() << '\n';
+        other.Formats()[i]->saveas(other.Formats()[i]->getPath());
+        std::cout << "Successfully saved " << other.Formats()[i]->getPath() << '\n';
     }
+    other.Transformations().clear();
 }
 
 void Editor::commandAdd(Session& other, std::string paths)
 {
     if (isCorrectFileFormat(paths) && read(paths))
     {
-        other.getFormats().push_back(loadAccordingToFormat(paths));
-        other.getFormats().back()->load(paths);
+        other.Formats().push_back(loadAccordingToFormat(paths));
+        other.Formats().back()->load(paths);
         other.addTransformations("add");
-        std::cout << "Successfully added: " << other.getFormats().back()->getPath() << '\n';
+        std::cout << "Successfully added: " << other.Formats().back()->getPath() << '\n';
     }
     else
     {
@@ -201,14 +202,14 @@ void Editor::commandAdd(Session& other, std::string paths)
     }
 }
 
-void Editor::commantRotation(Session& other)
+void Editor::commandRotation(Session& other)
 {
     std::string direction;
     std::cin.ignore();
     std::cin >> direction;
-    for (size_t i = 0; i < other.getFormats().size(); i++)
+    for (size_t i = 0; i < other.Formats().size(); i++)
     {
-        other.getFormats()[i]->rotation(direction);
+        other.Formats()[i]->rotation(direction);
     }
     std::string helper = command + " " + direction;
     other.addTransformations(helper);
@@ -223,15 +224,15 @@ void Editor::commandSwitchSession()
     {
         std::cout << "You switch to session with ID: " << id << "!\n";
         std::cout << "Name of images in the session ";
-        for (size_t i = 0; i < session[id - 1].getFormats().size(); i++)
+        for (size_t i = 0; i < session[id - 1].Formats().size(); i++)
         {
-            std::cout << session[id - 1].getFormats()[i]->getPath() << " ";
+            std::cout << session[id - 1].Formats()[i]->getPath() << " ";
         }
         
         std::cout << "\nPending transformations: ";
-        for (size_t i = 0; i < session[id - 1].getTransformations().size(); i++)
+        for (size_t i = 0; i < session[id - 1].Transformations().size(); i++)
         {
-            std::cout << session[id - 1].getTransformations()[i] << ", ";
+            std::cout << session[id - 1].Transformations()[i] << ", ";
         }
         std::cout << '\n';
     }
@@ -243,50 +244,50 @@ void Editor::commandSwitchSession()
 
 void Editor::commandUndo(Session& other)
 {
-    if (other.getTransformations().size() != 0)//Ако има поне една промяна:
+    if (other.Transformations().size() != 0)//Ако има поне една промяна:
     {
-        std::string helper = other.getTransformations().back();//Премахваме я от списъка с трансформации.
+        std::string helper = other.Transformations().back();//Премахваме я от списъка с трансформации.
         //В зависимост от направената трансформация, премахва промените.
         if (helper == "grayscale")
         {
-            for (size_t i = 0; i < other.getFormats().size(); i++)
+            for (size_t i = 0; i < other.Formats().size(); i++)
             {
-                other.getFormats()[i]->undoGrayscale();
+                other.Formats()[i]->undoGrayscale();
             }
         }
         else if (helper == "monochrome")
         {
-            for (size_t i = 0; i < other.getFormats().size(); i++)
+            for (size_t i = 0; i < other.Formats().size(); i++)
             {
-                other.getFormats()[i]->undoMonochrome();
+                other.Formats()[i]->undoMonochrome();
             }
         }
         else if (helper == "negative")
         {
-            for (size_t i = 0; i < other.getFormats().size(); i++)
+            for (size_t i = 0; i < other.Formats().size(); i++)
             {
-                other.getFormats()[i]->negative();
+                other.Formats()[i]->negative();
             }
         }
         else if (helper == "rotate right")
         {
-            for (size_t i = 0; i < other.getFormats().size(); i++)
+            for (size_t i = 0; i < other.Formats().size(); i++)
             {
-                other.getFormats()[i]->rotation("left");
+                other.Formats()[i]->rotation("left");
             }
         }
         else if (helper == "rotate left")
         {
-            for (size_t i = 0; i < other.getFormats().size(); i++)
+            for (size_t i = 0; i < other.Formats().size(); i++)
             {
-                other.getFormats()[i]->rotation("right");
+                other.Formats()[i]->rotation("right");
             }
         }
         else if (helper == "add")
         {
-            other.getFormats().pop_back();
+            other.Formats().pop_back();
         }
-        other.getTransformations().pop_back();
+        other.Transformations().pop_back();
 
     }
     else std::cout << "Cannot undo!\n";//Ако няма транформации.
@@ -311,13 +312,13 @@ void Editor::commandCollage(Session& other)
     std::string image1 = paths[2];
     std::string image2 = paths[1];
     std::string outimage = paths[0];
-    for (size_t i = 0; i < other.getFormats().size(); i++)
+    for (size_t i = 0; i < other.Formats().size(); i++)
     {
-        if (other.getFormats()[i]->getPath() == image1)
+        if (other.Formats()[i]->getPath() == image1)
         {
             flag1 = true;
         }
-        if (other.getFormats()[i]->getPath() == image2)
+        if (other.Formats()[i]->getPath() == image2)
         {
             flag2 = true;
         }
@@ -328,9 +329,10 @@ void Editor::commandCollage(Session& other)
     {      
         /*Създава колаж от две изображения <image1> и <image2> (в един и същ формат и една и съща размерност),
            налични в текущата сесия. Резултатът се записва в ново изображение <outimage>, което се добавя в текущата сесия.*/
-        other.getFormats().push_back(loadAccordingToFormat(outimage));
-        other.getFormats().back()->collage(direction, image1, image2, outimage);
+        other.Formats().push_back(loadAccordingToFormat(outimage));
+        other.Formats().back()->collage(direction, image1, image2, outimage);
         other.addTransformations("collage");        
+        std::cout << "New collage \"" << outimage << "\" created!\n";
     }
     else std::cout << "Unable to make collage!\n";
 }
@@ -339,23 +341,21 @@ void Editor::load()//Командна функция, създаваща сесия и извършваща основните ре
 {    
     std::string paths = {};//Променлива, чрез която въвеждаме адрес/и на изображение/я.
       
-    //std::string direction; //Променлива, която използваме, когато въвеждаме посока на завъртане. 
-
     std::cin.ignore();
     std::getline(std::cin, paths);//Въвеждаме адрес/и на изображение/я.
     std::vector<std::string> path = Editor::findPath(paths);//Отделяме коректните формати, за да ги имаме един по един.
 
     if (countExistedImage(path) != 0)//Ако има поне една снимка, то създаваме сесия с уникален идентификационен номер.
     {
-        Session helper;//При всяко извикване, идентификационният номер се променя.
-        std::cout << "Session with ID: " << helper.getId() << " started!\n";
+        session.push_back(Session());
+        std::cout << "Session with ID: " << session.back().getId() << " started!\n";
         for (int i = path.size() - 1; i >= 0; i--)
         {
             if (isCorrectFileFormat(path[i]) && read(path[i]))
-            {
-                helper.getFormats().push_back(loadAccordingToFormat(path[i]));//Добавяме изображението според вида му.
-                helper.getFormats().back()->load(path[i]);//Зарежда информация за него.
-                helper.getTransformations() = {};//Няма никакви тронсформации все още.
+            {           
+                session.back().Formats().push_back(loadAccordingToFormat(path[i]));//Добавяме изображението според вида му.           
+                session.back().Formats().back()->load(path[i]);//Зарежда информация за него.
+                session.back().Transformations() = {};//Няма никакви трансформации все още.
                 std::cout << "Image " << path[i] << " added!\n";
             }
             else
@@ -363,12 +363,10 @@ void Editor::load()//Командна функция, създаваща сесия и извършваща основните ре
                 std::cout << "Image " << path[i] << " is not added!\n";
             }
         }
-        session.push_back(helper);//Добавяме към масива от сесии текущата сесия.
-
         do
         {
             do//Въвеждаме команда, която трябва да е валидна.
-            {
+            {                
                 std::cout << ">";
 
                 std::cin >> command;
@@ -412,7 +410,7 @@ void Editor::load()//Командна функция, създаваща сесия и извършваща основните ре
             }
             else if (command == "rotate")//Завъртане на изображенията в сесията на 90° в зависимост от зададената посока.
             {
-                commantRotation(session[Session::getId() - 1]);
+                commandRotation(session[Session::getId() - 1]);
             }
             else if (command == "switch")//Превключва към сесия с идентификационен номер <session>.
             {
@@ -435,13 +433,7 @@ void Editor::load()//Командна функция, създаваща сесия и извършваща основните ре
         if (command == "close")
         {
             std::cout << "Successfully closed!\n";
-        }
-
-     //for (size_t i = 0; i < helper.getFormats().size(); i++)
-     //{
-     //    delete helper.getFormats()[i];
-     //}
-       
+        }       
     }
     else
     {
@@ -470,4 +462,14 @@ void Editor::start()
 
     } while (command != "exit");
     std::cout << "Exiting the program...\n";
+
+    //Изчистваме заделената памет.
+    for (size_t i = 0; i < session.size(); i++)
+    {
+        for (size_t j = 0; j < session[i].Formats().size(); j++)
+        {
+            delete session[i].Formats()[j];
+        }
+    }
+
 }

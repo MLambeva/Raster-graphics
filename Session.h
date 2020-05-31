@@ -13,12 +13,11 @@ private:
 	std::vector<std::string> transformations;
 public:
 	Session();
-	//~Session();
 	
 	static int getId();
-	std::vector<Formats*>& getFormats();
-	std::vector<std::string>& getTransformations();
-	
+	std::vector<Formats*>& Formats();
+	std::vector<std::string>& Transformations();
+		
 	void addTransformations(std::string transformations);//Помощна функциия за добавяне на трансформация.
 
 	static int generateId();//Генерира идентификационния номер.

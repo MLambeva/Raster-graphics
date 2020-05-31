@@ -2,10 +2,9 @@
 
 
 int main()
-{
- 
-   Editor editor;
-   editor.start();
+{ 
+
+  Editor::start();
 
   return 0;
 }

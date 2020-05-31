@@ -5,9 +5,7 @@ PBM::PBM():Formats()
 	this->pixels = { };
 };
 
-PBM::~PBM()
-{
-}
+PBM::~PBM(){}
 
 void PBM::load(std::string path)//Функция за прочитане на информация от изображения.
 {

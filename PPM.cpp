@@ -4,9 +4,7 @@
 
 PPM::PPM() : Formats(), maxValue(0), pixels({ }) {};
 
-PPM::~PPM()
-{
-}
+PPM::~PPM(){}
 
 void PPM::load(std::string path)//Функция за прочитане на информация от изображения.
 {

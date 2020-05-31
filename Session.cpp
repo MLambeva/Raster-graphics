@@ -16,25 +16,17 @@ Session::Session()
 	}
 }
 
-//Session::~Session()
-//{
-//	for (size_t i = 0; i < this->formats.size(); i++)
-//	{
-//		delete this->formats[i];
-//	}
-//}
-
 int Session::getId()
 {
 	return id;
 }
 
-std::vector<Formats*>& Session::getFormats()
+std::vector<Formats*>& Session::Formats()
 {
 	return this->formats;
 }
 
-std::vector<std::string>& Session::getTransformations()
+std::vector<std::string>& Session::Transformations()
 {
 	return this->transformations;
 }
